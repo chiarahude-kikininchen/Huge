@@ -22,8 +22,19 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        Session::add('feedback_negative', 'Public registration is disabled.');
-        Redirect::to('login/index');
+        if (!LoginModel::isUserLoggedIn()) {
+            Session::add('feedback_negative', 'Please log in first.');
+            Redirect::to('login/index');
+            return;
+        }
+
+        if (Session::get('user_account_type') != 7) {
+            Session::add('feedback_negative', 'Only admins can add users.');
+            Redirect::home();
+            return;
+        }
+
+        $this->View->render('register/index');
     }
 
     /**
@@ -32,8 +43,26 @@ class RegisterController extends Controller
      */
     public function register_action()
     {
-        Session::add('feedback_negative', 'Public registration is disabled.');
-        Redirect::to('login/index');
+        if (!LoginModel::isUserLoggedIn()) {
+            Session::add('feedback_negative', 'Please log in first.');
+            Redirect::to('login/index');
+            return;
+        }
+
+        if (Session::get('user_account_type') != 7) {
+            Session::add('feedback_negative', 'Only admins can add users.');
+            Redirect::home();
+            return;
+        }
+
+        $registration_successful = RegistrationModel::registerNewUser();
+
+        if ($registration_successful) {
+            Session::add('feedback_positive', 'User account created.');
+            Redirect::to('register/index');
+        } else {
+            Redirect::to('register/index');
+        }
     }
 
     /**
