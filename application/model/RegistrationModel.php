@@ -96,7 +96,7 @@ class RegistrationModel
         $return = true;
 
         // perform all necessary checks
-        if (!CaptchaModel::checkCaptcha($captcha)) {
+        if (Config::get('CAPTCHA_ENABLED') && !CaptchaModel::checkCaptcha($captcha)) {
             Session::add('feedback_negative', Text::get('FEEDBACK_CAPTCHA_WRONG'));
             $return = false;
         }
