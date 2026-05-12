@@ -22,11 +22,8 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        if (LoginModel::isUserLoggedIn()) {
-            Redirect::home();
-        } else {
-            $this->View->render('register/index');
-        }
+        Session::add('feedback_negative', 'Public registration is disabled.');
+        Redirect::to('login/index');
     }
 
     /**
@@ -35,13 +32,8 @@ class RegisterController extends Controller
      */
     public function register_action()
     {
-        $registration_successful = RegistrationModel::registerNewUser();
-
-        if ($registration_successful) {
-            Redirect::to('login/index');
-        } else {
-            Redirect::to('register/index');
-        }
+        Session::add('feedback_negative', 'Public registration is disabled.');
+        Redirect::to('login/index');
     }
 
     /**
