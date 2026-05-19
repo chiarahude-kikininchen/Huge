@@ -340,4 +340,29 @@ class UserModel
         // return one row (we only have one result or nothing)
         return $query->fetch();
     }
+    /**
+     * Gets all users together with their user group name.
+     *
+     * @return array All users with group information
+     */
+    public static function getAllUsersWithGroups()
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "SELECT 
+                    users.user_id,
+                    users.user_name,
+                    users.user_email,
+                    users.user_account_type,
+                    user_groups.name AS group_name
+                FROM users
+                LEFT JOIN user_groups
+                ON users.user_account_type = user_groups.id";
+
+        $query = $database->prepare($sql);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
 }

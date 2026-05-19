@@ -92,4 +92,33 @@ class AdminModel
             return true;
         }
     }
+    /**
+     * Changes the group/account type of a user.
+     *
+     * @param int $userId
+     * @param int $userAccountType
+     * @return bool
+     */
+    public static function changeUserGroup($userId, $userAccountType)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $query = $database->prepare("UPDATE users 
+                                     SET user_account_type = :user_account_type 
+                                     WHERE user_id = :user_id 
+                                     LIMIT 1");
+
+        $query->execute(array(
+            ':user_account_type' => $userAccountType,
+            ':user_id' => $userId
+        ));
+
+        if ($query->rowCount() == 1) {
+            Session::add('feedback_positive', 'Benutzergruppe wurde geändert.');
+            return true;
+        }
+
+        Session::add('feedback_negative', 'Benutzergruppe konnte nicht geändert werden.');
+        return false;
+    }
 }

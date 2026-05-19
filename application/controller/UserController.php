@@ -154,4 +154,14 @@ class UserController extends Controller
         else
             Redirect::to('user/changePassword');
     }
+
+    /**
+     * Show all users with their groups
+     */
+    public function groups()
+    {
+        $this->View->render('user/groups', array(
+            'users' => UserModel::getAllUsersWithGroups()
+        ));
+    }
 }
