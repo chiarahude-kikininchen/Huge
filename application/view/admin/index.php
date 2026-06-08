@@ -40,7 +40,6 @@
                                     <option value="3" <?= ($user->user_account_type == 3 ? 'selected' : ''); ?>>Gruppe 3</option>
                                     <option value="4" <?= ($user->user_account_type == 4 ? 'selected' : ''); ?>>Gruppe 4</option>
                                     <option value="5" <?= ($user->user_account_type == 5 ? 'selected' : ''); ?>>Gruppe 5</option>
-                                    <option value="6" <?= ($user->user_account_type == 6 ? 'selected' : ''); ?>>Gruppe 6</option>
                                     <option value="7" <?= ($user->user_account_type == 7 ? 'selected' : ''); ?>>Admin</option>
                                 </select>
                             </td>

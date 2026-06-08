@@ -11,7 +11,7 @@
 </head>
 <body>
 <!-- wrapper, to center website -->
-<div class="wrapper">
+<html class="wrapper">
 
     <!-- logo -->
     <div class="logo"></div>
@@ -30,6 +30,16 @@
             </li>
             <li <?php if (View::checkForActiveControllerAndAction($filename, "user/groups")) { echo ' class="active" '; } ?> >
                 <a href="<?php echo Config::get('URL'); ?>user/groups">User & Gruppen</a>
+            </li>
+            <?php $unread = MessengerModel::unreadMessages(); ?>
+
+            <li <?php if (View::checkForActiveController($filename, "messenger")) { echo ' class="active"'; } ?> >
+                <a href="<?php echo Config::get('URL'); ?>messenger/index">
+                    Messenger
+                    <?php if ($unread > 0) { ?>
+                        <span class="badge"><?php echo $unread; ?></span>
+                    <?php } ?>
+                </a>
             </li>
             <li <?php if (View::checkForActiveController($filename, "note")) { echo ' class="active" '; } ?> >
                 <a href="<?php echo Config::get('URL'); ?>note/index">My Notes</a>
@@ -84,3 +94,16 @@
             <?php endif; ?>
         <?php endif; ?>
     </ul>
+</body>
+</html>
+
+<style>
+    .badge {
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 11px;
+        margin-left: 6px;
+    }
+</style>

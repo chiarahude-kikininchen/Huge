@@ -29,14 +29,39 @@ class NoteModel
      */
     public static function getNote($note_id)
     {
-        $database = DatabaseFactory::getFactory()->getConnection();
+//        $database = DatabaseFactory::getFactory()->getConnection();
+//
+//        $sql = "SELECT user_id, note_id, note_text FROM notes WHERE user_id = :user_id AND note_id = :note_id LIMIT 1";
+//        $query = $database->prepare($sql);
+//        $query->execute(array(':user_id' => Session::get('user_id'), ':note_id' => $note_id));
+//
+//        // fetch() is the PDO method that gets a single result
+//        return $query->fetch();
 
-        $sql = "SELECT user_id, note_id, note_text FROM notes WHERE user_id = :user_id AND note_id = :note_id LIMIT 1";
+        $database = new mysqli(
+            Config::get('DB_HOST'),
+            Config::get('DB_USER'),
+            Config::get('DB_PASS'),
+            Config::get('DB_NAME'),
+            Config::get('DB_PORT')
+        );
+
+        $sql ='SELECT user_id, note_id, note_text
+                FROM notes
+                WHERE user_id = ? AND note_id = ?
+                LIMIT 1';
+
         $query = $database->prepare($sql);
-        $query->execute(array(':user_id' => Session::get('user_id'), ':note_id' => $note_id));
 
-        // fetch() is the PDO method that gets a single result
-        return $query->fetch();
+        $user_id = Session::get('user_id');
+
+        $query->bind_param('ii', $user_id, $note_id);
+
+        $query->execute();
+
+        $result = $query->get_result();
+
+        return $result->fetch_object();
     }
 
     /**
