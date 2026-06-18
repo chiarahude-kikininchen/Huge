@@ -7,7 +7,7 @@ class GalleryModel
     {
         $userId = Session::get('user_id');
 
-        // Prüfen, ob Datei überhaupt existiert
+        // Prüfen, die ob Datei überhaupt existiert
         if (!isset($_FILES['datei'])) {
             die('Keine Datei ausgewählt!');
         }

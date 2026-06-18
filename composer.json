@@ -12,5 +12,8 @@
     },
     "autoload": {
         "psr-4": { "": ["application/core/", "application/model/"] }
-    }
+    },
+  "require": {
+    "ext-fileinfo": "*"
+  }
 }
