@@ -74,4 +74,19 @@ class NotesController extends Controller {
         $searchTerm = Request::post('searchTerm');
         $notes = NotesModel::searchNotes($searchTerm);
     }
+
+    public function updatePosition()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['note_id'], $data['pos_x'], $data['pos_y'])) {
+            return;
+        }
+
+        NotesModel::updatePosition(
+            $data['note_id'],
+            $data['pos_x'],
+            $data['pos_y']
+        );
+    }
 }

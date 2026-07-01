@@ -6,6 +6,35 @@
  */
 class View
 {
+
+    public $notes;
+    public $note;
+    public $user;
+    public $users;
+    public $title;
+    public $content;
+    public $sort_order;
+    public $sort_order_notes;
+    public $sort_order_user;
+    public $sort_order_users;
+    public $sort_order_note;
+
+    public $search;
+    public $searchTerm;
+    public $searchResults;
+    public $searchResultsNotes;
+    public $searchResultsUsers;
+    public $searchResultsNote;
+    public $searchResultsUser;
+    public $searchResultsNoteCount;
+    public $searchResultsUserCount;
+    public $searchResultsNoteCountAll;
+    public $searchResultsUserCountAll;
+    public $searchResultsNoteCountFiltered;
+    public $searchResultsUserCountFiltered;
+    public $searchResultsNoteCountFilteredAll;
+    public $searchResultsUserCountFilteredAll;
+
     /**
      * simply includes (=shows) the view. this is done from the controller. In the controller, you usually say
      * $this->view->render('help/index'); to show (in this example) the view index.php in the folder help.

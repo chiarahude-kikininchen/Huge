@@ -126,4 +126,22 @@ class NotesModel
 
         return $query->fetchAll();
     }
+
+    public static function updatePosition($noteId, $posX, $posY)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "UPDATE notes 
+            SET pos_x = :pos_x, pos_y = :pos_y 
+            WHERE note_id = :note_id 
+            AND user_id = :user_id";
+
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':pos_x' => $posX,
+            ':pos_y' => $posY,
+            ':note_id' => $noteId,
+            ':user_id' => Session::get('user_id')
+        ]);
+    }
 }

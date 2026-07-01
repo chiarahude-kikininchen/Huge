@@ -11,9 +11,11 @@
     Neue Notiz
 </button>
 
-<div id="notesList">
+<div id="notesBoard">
     <?php foreach ($this->notes as $note): ?>
-        <div class="note" data-id="<?= $note->note_id ?>">
+        <div class="note"
+             data-id="<?= $note->note_id ?>"
+             style="left: <?= isset($note->pos_x) ? $note->pos_x : 0 ?>px; top: <?= isset($note->pos_y) ? $note->pos_y : 0 ?>px;">
 
             <div class="note-header">
                 <span class="note-title">
@@ -29,9 +31,9 @@
                 <button type="button"
                         onclick="openEditPopup(
                         <?= $note->note_id ?>,
-                            '<?= htmlspecialchars($note->title, ENT_QUOTES) ?>',
-                            '<?= htmlspecialchars($note->content, ENT_QUOTES) ?>'
-                            )">
+                                '<?= htmlspecialchars($note->title, ENT_QUOTES) ?>',
+                                '<?= htmlspecialchars($note->content, ENT_QUOTES) ?>'
+                                )">
                     Bearbeiten
                 </button>
 
@@ -77,14 +79,18 @@
         background-color: #f5f5f5;
     }
 
-    #notesList {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
+    #notesBoard {
+        position: relative;
+        width: 100%;
+        min-height: 700px;
         margin-top: 25px;
+        background: #f5f5f5;
+        overflow: hidden;
+        border: 2px dashed black;
     }
 
     .note {
+        position: absolute;
         background: white;
         border: 2px solid black;
         box-shadow: 3px 3px 0 black;
@@ -92,6 +98,7 @@
         min-height: 190px;
         font-family: "Inconsolata", monospace;
         cursor: grab;
+        user-select: none;
     }
 
     .note:active {
@@ -112,6 +119,7 @@
                 white 2px,
                 white 4px
         );
+        cursor: grab;
     }
 
     .note-title {
@@ -140,7 +148,8 @@
     .note button,
     .note a,
     form button,
-    button {
+    button,
+    form a {
         background: white;
         border: 1px solid black;
         padding: 3px 7px;
@@ -154,7 +163,8 @@
     .note button:hover,
     .note a:hover,
     form button:hover,
-    button:hover {
+    button:hover,
+    form a:hover {
         background: black;
         color: white;
     }
@@ -203,8 +213,6 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
 <script>
     function openCreatePopup() {
         document.getElementById('createPopup').style.display = 'flex';
@@ -228,26 +236,66 @@
         document.getElementById('editPopup').style.display = 'none';
     }
 
-    new Sortable(document.getElementById('notesList'), {
-        animation: 150,
+    const board = document.getElementById('notesBoard');
+    const notes = document.querySelectorAll('.note');
 
-        onEnd: function () {
-            let order = [];
+    notes.forEach((note, index) => {
+        let isDragging = false;
+        let offsetX = 0;
+        let offsetY = 0;
 
-            document.querySelectorAll('.note').forEach((note, index) => {
-                order.push({
-                    id: note.dataset.id,
-                    position: index
-                });
-            });
+        if (note.style.left === '0px' && note.style.top === '0px') {
+            note.style.left = (index * 280) + 'px';
+            note.style.top = '0px';
+        }
 
-            fetch("<?= Config::get('URL'); ?>notes/updateOrder", {
+        note.addEventListener('mousedown', function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+                return;
+            }
+
+            isDragging = true;
+
+            const noteRect = note.getBoundingClientRect();
+
+            offsetX = e.clientX - noteRect.left;
+            offsetY = e.clientY - noteRect.top;
+
+            note.style.zIndex = 999;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+
+            const boardRect = board.getBoundingClientRect();
+
+            let x = e.clientX - boardRect.left - offsetX;
+            let y = e.clientY - boardRect.top - offsetY;
+
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+
+            note.style.left = x + 'px';
+            note.style.top = y + 'px';
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (!isDragging) return;
+
+            isDragging = false;
+            note.style.zIndex = 1;
+
+            fetch("<?= Config::get('URL'); ?>notes/updatePosition", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(order)
+                body: JSON.stringify({
+                    note_id: note.dataset.id,
+                    pos_x: parseInt(note.style.left),
+                    pos_y: parseInt(note.style.top)
+                })
             });
-        }
+        });
     });
 </script>
