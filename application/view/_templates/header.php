@@ -44,8 +44,8 @@
             <li <?php if (View::checkForActiveController($filename, "gallery")) { echo ' class="active"'; } ?> >
                 <a href="<?php echo Config::get('URL'); ?>gallery/index">Gallery</a>
             </li>
-            <li <?php if (View::checkForActiveController($filename, "note")) { echo ' class="active" '; } ?> >
-                <a href="<?php echo Config::get('URL'); ?>note/index">My Notes</a>
+            <li <?php if (View::checkForActiveController($filename, "notes")) { echo ' class="active" '; } ?> >
+                <a href="<?php echo Config::get('URL'); ?>notes/index">My Notes</a>
             </li>
         <?php } else { ?>
             <!-- for not logged in users -->
