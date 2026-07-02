@@ -15,6 +15,11 @@
             <input type="password" name="user_password_new" pattern=".{6,}" placeholder="Password (6+ characters)" required autocomplete="off" />
             <input type="password" name="user_password_repeat" pattern=".{6,}" required placeholder="Repeat password" autocomplete="off" />
 
+            <!-- Google Captcha -->
+            <div class="g-recaptcha" data-sitekey="<?= Config::get('RECAPTCHA_SITE_KEY'); ?>"></div>
+
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
             <?php if (Config::get('CAPTCHA_ENABLED')) { ?>
                 <!-- show the captcha by calling the register/showCaptcha-method in the src attribute of the img tag -->
                 <img id="captcha" src="<?php echo Config::get('URL'); ?>register/showCaptcha" />

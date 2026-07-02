@@ -38,34 +38,6 @@ class RegisterController extends Controller
     }
 
     /**
-     * Register page action
-     * POST-request after form submit
-     */
-    public function register_action()
-    {
-        if (!LoginModel::isUserLoggedIn()) {
-            Session::add('feedback_negative', 'Please log in first.');
-            Redirect::to('login/index');
-            return;
-        }
-
-        if (Session::get('user_account_type') != 7) {
-            Session::add('feedback_negative', 'Only admins can add users.');
-            Redirect::home();
-            return;
-        }
-
-        $registration_successful = RegistrationModel::registerNewUser();
-
-        if ($registration_successful) {
-            Session::add('feedback_positive', 'User account created.');
-            Redirect::to('register/index');
-        } else {
-            Redirect::to('register/index');
-        }
-    }
-
-    /**
      * Verify user after activation mail link opened
      * @param int $user_id user's id
      * @param string $user_activation_verification_code user's verification token
@@ -91,5 +63,52 @@ class RegisterController extends Controller
     public function showCaptcha()
     {
         CaptchaModel::generateAndShowCaptcha();
+    }
+
+    public function register_action()
+    {
+        if (!LoginModel::isUserLoggedIn()) {
+            Session::add('feedback_negative', 'Please log in first.');
+            Redirect::to('login/index');
+            return;
+        }
+
+        if (Session::get('user_account_type') != 7) {
+            Session::add('feedback_negative', 'Only admins can add users.');
+            Redirect::home();
+            return;
+        }
+
+        $recaptchaResponse = Request::post('g-recaptcha-response');
+
+        if (empty($recaptchaResponse)) {
+            Session::add('feedback_negative', 'Bitte bestätige das reCAPTCHA.');
+            Redirect::to('register/index');
+            return;
+        }
+
+        $secretKey = Config::get('RECAPTCHA_SECRET_KEY');
+
+        $response = file_get_contents(
+            'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey .
+            '&response=' . $recaptchaResponse
+        );
+
+        $responseData = json_decode($response);
+
+        if (!$responseData || !$responseData->success) {
+            Session::add('feedback_negative', 'reCAPTCHA wurde nicht bestätigt.');
+            Redirect::to('register/index');
+            return;
+        }
+
+        $registration_successful = RegistrationModel::registerNewUser();
+
+        if ($registration_successful) {
+            Session::add('feedback_positive', 'User account created.');
+            Redirect::to('register/index');
+        } else {
+            Redirect::to('register/index');
+        }
     }
 }
